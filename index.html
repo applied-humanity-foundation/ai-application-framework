@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Application Framework — Applied Humanity Foundation</title>
+<meta name="description" content="Open-source tools for responsible AI integration in education and nonprofit applications.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a26;--bg4:#22222f;
+  --text:#e4e4ed;--text2:#9999aa;--text3:#666677;
+  --accent:#2563eb;--accent2:#0ea5e9;--accent3:#06d6a0;
+  --grad:linear-gradient(135deg,#2563eb,#0ea5e9);
+  --grad2:linear-gradient(135deg,#0ea5e9,#06d6a0);
+  --border:#2a2a3a;--radius:12px;--radius2:8px;
+  --mono:'JetBrains Mono',monospace;--sans:'Inter',system-ui,sans-serif;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+  --glow:0 0 30px rgba(37,99,235,.15);
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+a{color:var(--accent2);text-decoration:none;transition:color .2s}
+a:hover{color:#38bdf8}
+::selection{background:var(--accent);color:#fff}
+h1,h2,h3,h4{font-weight:700;line-height:1.3}
+
+/* Canvas background */
+#bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.35}
+
+/* Nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(16px);background:rgba(10,10,15,.8);border-bottom:1px solid var(--border);transition:transform .3s}
+.nav.hidden{transform:translateY(-100%)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px}
+.nav-logo{font-weight:800;font-size:1.25rem;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.5px}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{color:var(--text2);font-size:.9rem;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{background:var(--grad);color:#fff;padding:8px 20px;border-radius:999px;font-size:.85rem;font-weight:600;transition:opacity .2s}
+.nav-cta:hover{opacity:.85;color:#fff}
+.mobile-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.5rem;cursor:pointer}
+
+/* Container */
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+section{position:relative;z-index:1;padding:100px 0}
+
+/* Hero */
+.hero{min-height:100vh;display:flex;align-items:center;padding-top:64px}
+.hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;width:100%}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);padding:6px 16px;border-radius:999px;font-size:.8rem;color:var(--accent2);margin-bottom:24px}
+.hero-badge::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent3);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{font-size:3.2rem;font-weight:800;line-height:1.1;margin-bottom:20px}
+.hero h1 .gradient{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-desc{color:var(--text2);font-size:1.1rem;margin-bottom:32px;max-width:480px}
+.hero-btns{display:flex;gap:16px;flex-wrap:wrap}
+.btn-primary{background:var(--grad);color:#fff;padding:14px 32px;border-radius:999px;font-weight:600;font-size:.95rem;border:none;cursor:pointer;transition:opacity .2s,transform .15s}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px);color:#fff}
+.btn-secondary{background:transparent;color:var(--text);padding:14px 32px;border-radius:999px;font-weight:600;font-size:.95rem;border:1px solid var(--border);cursor:pointer;transition:border-color .2s,transform .15s}
+.btn-secondary:hover{border-color:var(--accent2);transform:translateY(-1px)}
+
+/* Hero code terminal */
+.hero-terminal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow),var(--glow)}
+.terminal-bar{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--bg3);border-bottom:1px solid var(--border)}
+.terminal-dot{width:12px;height:12px;border-radius:50%}
+.terminal-dot.r{background:#ff5f57}.terminal-dot.y{background:#febc2e}.terminal-dot.g{background:#28c840}
+.terminal-title{margin-left:8px;font-size:.75rem;color:var(--text3);font-family:var(--mono)}
+.terminal-body{padding:20px;font-family:var(--mono);font-size:.85rem;line-height:1.8;min-height:280px}
+.terminal-body .kw{color:#c084fc}
+.terminal-body .fn{color:#60a5fa}
+.terminal-body .str{color:#34d399}
+.terminal-body .cm{color:#555}
+.terminal-body .op{color:#f472b6}
+.terminal-body .var{color:#fbbf24}
+.type-cursor{display:inline-block;width:8px;height:18px;background:var(--accent2);animation:blink 1s step-end infinite;vertical-align:text-bottom;margin-left:2px}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* Stats */
+.stats{padding:40px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg2)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;text-align:center}
+.stat-item h3{font-size:1.5rem;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+.stat-item p{color:var(--text2);font-size:.85rem}
+
+/* Section titles */
+.section-label{text-transform:uppercase;font-size:.8rem;font-weight:600;letter-spacing:2px;color:var(--accent2);margin-bottom:12px}
+.section-title{font-size:2.4rem;margin-bottom:16px}
+.section-desc{color:var(--text2);max-width:600px;margin-bottom:48px}
+
+/* Features */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.feature-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:32px;transition:border-color .3s,transform .3s}
+.feature-card:hover{border-color:var(--accent);transform:translateY(-4px)}
+.feature-icon{width:48px;height:48px;border-radius:var(--radius2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:16px;background:var(--bg3);border:1px solid var(--border)}
+.feature-card h3{font-size:1.1rem;margin-bottom:8px}
+.feature-card p{color:var(--text2);font-size:.9rem;line-height:1.6}
+
+/* API Demo */
+.demo-container{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.demo-tabs{display:flex;border-bottom:1px solid var(--border);overflow-x:auto}
+.demo-tab{padding:14px 24px;font-size:.85rem;font-weight:500;color:var(--text3);background:none;border:none;cursor:pointer;white-space:nowrap;transition:color .2s,background .2s;border-bottom:2px solid transparent;font-family:var(--sans)}
+.demo-tab.active{color:var(--accent2);border-bottom-color:var(--accent2);background:rgba(14,165,233,.05)}
+.demo-tab:hover:not(.active){color:var(--text2);background:rgba(255,255,255,.02)}
+.demo-panel{display:none;padding:24px}
+.demo-panel.active{display:block}
+.demo-input-area{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.demo-input-area input,.demo-input-area textarea,.demo-input-area select{flex:1;min-width:200px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius2);padding:12px 16px;color:var(--text);font-family:var(--sans);font-size:.9rem;resize:vertical;transition:border-color .2s}
+.demo-input-area textarea{min-height:80px}
+.demo-input-area input:focus,.demo-input-area textarea:focus,.demo-input-area select:focus{outline:none;border-color:var(--accent2)}
+.demo-input-area select option{background:var(--bg2)}
+.demo-run-btn{background:var(--grad);color:#fff;border:none;padding:12px 28px;border-radius:var(--radius2);font-weight:600;font-size:.9rem;cursor:pointer;transition:opacity .2s;white-space:nowrap;font-family:var(--sans)}
+.demo-run-btn:hover{opacity:.85}
+.demo-run-btn:disabled{opacity:.5;cursor:not-allowed}
+.demo-output{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius2);padding:20px;min-height:120px;font-family:var(--mono);font-size:.85rem;line-height:1.7;position:relative;white-space:pre-wrap;word-break:break-word}
+.demo-output .out-label{color:var(--accent3);font-weight:500;margin-bottom:8px;display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px}
+.demo-output .out-text{color:var(--text)}
+.demo-code{margin-top:16px;position:relative}
+.demo-code-label{font-size:.75rem;color:var(--text3);margin-bottom:6px;font-family:var(--mono)}
+
+/* Classification bars */
+.class-result{margin-top:8px}
+.class-bar-wrap{margin-bottom:10px}
+.class-bar-label{display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:4px}
+.class-bar-label span:first-child{color:var(--text)}
+.class-bar-label span:last-child{color:var(--accent2)}
+.class-bar{height:6px;background:var(--bg3);border-radius:999px;overflow:hidden}
+.class-bar-fill{height:100%;border-radius:999px;background:var(--grad);transition:width 1s ease}
+
+/* Code blocks */
+.code-block{position:relative;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg3);border-bottom:1px solid var(--border)}
+.code-lang{font-size:.75rem;font-weight:600;color:var(--accent2);font-family:var(--mono);text-transform:uppercase}
+.copy-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:4px 12px;border-radius:6px;font-size:.75rem;cursor:pointer;font-family:var(--sans);transition:border-color .2s,color .2s}
+.copy-btn:hover{border-color:var(--accent2);color:var(--text)}
+.copy-btn.copied{border-color:var(--accent3);color:var(--accent3)}
+.code-body{padding:20px;font-family:var(--mono);font-size:.85rem;line-height:1.8;overflow-x:auto;white-space:pre}
+.code-body .kw{color:#c084fc}.code-body .fn{color:#60a5fa}.code-body .str{color:#34d399}
+.code-body .cm{color:#555}.code-body .op{color:#f472b6}.code-body .num{color:#fbbf24}
+.code-body .dec{color:#fb923c}.code-body .cls{color:#22d3ee}.code-body .prop{color:#a5b4fc}
+.code-examples-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+
+/* Quick start */
+.steps{display:grid;gap:24px}
+.step{display:flex;gap:20px;align-items:flex-start}
+.step-num{width:40px;height:40px;min-width:40px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;margin-top:4px}
+.step-content h3{font-size:1.1rem;margin-bottom:6px}
+.step-content p{color:var(--text2);font-size:.9rem;margin-bottom:12px}
+.step-code{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:12px 16px;font-family:var(--mono);font-size:.85rem;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.step-code code{color:var(--accent3)}
+.step-code .copy-btn{flex-shrink:0}
+
+/* API Reference */
+.api-cards{display:grid;gap:16px}
+.api-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .3s}
+.api-card:hover{border-color:var(--accent)}
+.api-card-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;cursor:pointer;user-select:none}
+.api-card-header h3{font-size:1rem;display:flex;align-items:center;gap:12px}
+.api-method{font-family:var(--mono);font-size:.75rem;font-weight:600;padding:4px 10px;border-radius:6px;text-transform:uppercase}
+.api-method.get{background:rgba(34,211,154,.12);color:#34d399}
+.api-method.post{background:rgba(96,165,250,.12);color:#60a5fa}
+.api-card-toggle{color:var(--text3);transition:transform .3s;font-size:1.2rem}
+.api-card.open .api-card-toggle{transform:rotate(180deg)}
+.api-card-body{display:none;padding:0 24px 24px;border-top:1px solid var(--border)}
+.api-card.open .api-card-body{display:block}
+.api-params{margin-top:16px}
+.api-params h4{font-size:.85rem;color:var(--text2);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
+.api-param{display:grid;grid-template-columns:140px 100px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:.85rem}
+.api-param:last-child{border-bottom:none}
+.api-param-name{font-family:var(--mono);color:var(--accent2)}
+.api-param-type{font-family:var(--mono);color:var(--text3)}
+.api-param-desc{color:var(--text2)}
+.api-example{margin-top:16px}
+
+/* About */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.about-content p{color:var(--text2);margin-bottom:16px;font-size:.95rem}
+.about-highlight{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:32px}
+.about-highlight h3{margin-bottom:16px}
+.about-list{list-style:none;display:grid;gap:12px}
+.about-list li{display:flex;align-items:flex-start;gap:12px;color:var(--text2);font-size:.9rem}
+.about-list li::before{content:"";width:20px;height:20px;min-width:20px;border-radius:50%;background:var(--grad);margin-top:2px;flex-shrink:0}
+
+/* Footer */
+.footer{border-top:1px solid var(--border);padding:48px 0;text-align:center;position:relative;z-index:1}
+.footer-inner{display:flex;flex-direction:column;align-items:center;gap:16px}
+.footer-logo{font-weight:800;font-size:1.1rem;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.footer-links{display:flex;gap:24px;list-style:none;flex-wrap:wrap;justify-content:center}
+.footer-links a{color:var(--text3);font-size:.85rem;transition:color .2s}
+.footer-links a:hover{color:var(--text)}
+.footer-copy{color:var(--text3);font-size:.8rem}
+
+/* Scroll reveal */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* Responsive */
+@media(max-width:900px){
+  .hero-inner{grid-template-columns:1fr}
+  .hero-terminal{max-width:560px}
+  .hero h1{font-size:2.4rem}
+  .features-grid{grid-template-columns:1fr 1fr}
+  .code-examples-grid{grid-template-columns:1fr}
+  .about-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .api-param{grid-template-columns:1fr;gap:4px}
+}
+@media(max-width:640px){
+  .features-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr}
+  .hero h1{font-size:1.9rem}
+  .section-title{font-size:1.8rem}
+  .nav-links{display:none}
+  .nav-links.open{display:flex;flex-direction:column;position:absolute;top:64px;left:0;right:0;background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 24px;gap:16px}
+  .mobile-toggle{display:block}
+  .demo-input-area{flex-direction:column}
+  .demo-run-btn{width:100%}
+}
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<!-- Nav -->
+<nav class="nav" id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">AIAF</a>
+    <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#demo">API Demo</a></li>
+      <li><a href="#code-examples">Code</a></li>
+      <li><a href="#docs">Docs</a></li>
+      <li><a href="https://github.com/applied-humanity-foundation/ai-application-framework" class="nav-cta" target="_blank">GitHub</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <div class="hero-badge">Open Source &middot; 501(c)(3) Nonprofit</div>
+        <h1>Responsible AI,<br><span class="gradient">Made Simple</span></h1>
+        <p class="hero-desc">Open-source tools for integrating AI into education and nonprofit applications. Built with safety, transparency, and accessibility at its core.</p>
+        <div class="hero-btns">
+          <a href="#demo" class="btn-primary">Try Demo</a>
+          <a href="#quickstart" class="btn-secondary">Read Docs</a>
+        </div>
+      </div>
+      <div class="hero-terminal">
+        <div class="terminal-bar">
+          <span class="terminal-dot r"></span>
+          <span class="terminal-dot y"></span>
+          <span class="terminal-dot g"></span>
+          <span class="terminal-title">main.py</span>
+        </div>
+        <div class="terminal-body" id="heroCode"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="stats" id="stats">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item reveal"><h3>4</h3><p>API Modules</p></div>
+      <div class="stat-item reveal"><h3>MIT</h3><p>License</p></div>
+      <div class="stat-item reveal"><h3>Py & TS</h3><p>Python &amp; TypeScript</p></div>
+      <div class="stat-item reveal"><h3>Edu</h3><p>Educational Use</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features">
+  <div class="container">
+    <div class="section-label reveal">Capabilities</div>
+    <h2 class="section-title reveal">Built for Responsible AI</h2>
+    <p class="section-desc reveal">Every feature is designed with safety, transparency, and education in mind.</p>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon">&#9889;</div>
+        <h3>Simple API</h3>
+        <p>Unified interface for multiple AI providers. Write once, switch providers with a single parameter change.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">&#128737;</div>
+        <h3>Responsible Defaults</h3>
+        <p>Built-in safety filters, rate limiting, and content moderation enabled by default. Override only when you need to.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">&#127891;</div>
+        <h3>Education First</h3>
+        <p>Detailed logging and step-by-step explanations. Designed for learning, not just production deployment.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">&#128279;</div>
+        <h3>Multi-Provider</h3>
+        <p>Works with OpenAI, Anthropic, Google, and open-source models. No vendor lock-in, ever.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">&#128272;</div>
+        <h3>Type Safe</h3>
+        <p>Full TypeScript types and Python type hints. Catch errors at development time, not runtime.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">&#128065;</div>
+        <h3>Privacy Focused</h3>
+        <p>No data collection, no telemetry, no tracking. Local-first processing options for sensitive data.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Interactive API Demo -->
+<section id="demo">
+  <div class="container">
+    <div class="section-label reveal">Playground</div>
+    <h2 class="section-title reveal">Interactive API Demo</h2>
+    <p class="section-desc reveal">Try the framework right in your browser. These simulations demonstrate how each module works.</p>
+    <div class="demo-container reveal">
+      <div class="demo-tabs">
+        <button class="demo-tab active" data-tab="generate" onclick="switchTab('generate')">Text Generation</button>
+        <button class="demo-tab" data-tab="summarize" onclick="switchTab('summarize')">Summarization</button>
+        <button class="demo-tab" data-tab="translate" onclick="switchTab('translate')">Translation</button>
+        <button class="demo-tab" data-tab="classify" onclick="switchTab('classify')">Classification</button>
+      </div>
+
+      <!-- Text Generation -->
+      <div class="demo-panel active" id="panel-generate">
+        <div class="demo-input-area">
+          <input type="text" id="gen-input" placeholder="Enter a prompt..." value="Explain photosynthesis for a 10-year-old">
+          <button class="demo-run-btn" onclick="runGenerate()">Run</button>
+        </div>
+        <div class="demo-output" id="gen-output">
+          <span class="out-label">Output</span>
+          <span class="out-text" id="gen-text"></span>
+        </div>
+        <div class="demo-code">
+          <div class="demo-code-label">Code</div>
+          <div class="code-block"><div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><div class="code-body"><span class="kw">from</span> ahf_ai <span class="kw">import</span> <span class="cls">TextGenerator</span>
+
+generator = <span class="cls">TextGenerator</span>(provider=<span class="str">"openai"</span>)
+response = generator.<span class="fn">generate</span>(
+    prompt=<span class="str">"Explain photosynthesis for a 10-year-old"</span>,
+    max_tokens=<span class="num">200</span>
+)
+<span class="fn">print</span>(response.text)</div></div>
+        </div>
+      </div>
+
+      <!-- Summarization -->
+      <div class="demo-panel" id="panel-summarize">
+        <div class="demo-input-area">
+          <textarea id="sum-input" rows="3" placeholder="Paste text to summarize...">Photosynthesis is a process used by plants and other organisms to convert light energy into chemical energy that can later be released to fuel the organism's activities. This chemical energy is stored in carbohydrate molecules, such as sugars and starches, which are synthesized from carbon dioxide and water. In most cases, oxygen is released as a waste product. Most plants, algae, and cyanobacteria perform photosynthesis, and such organisms are called photoautotrophs. Photosynthesis is largely responsible for producing and maintaining the oxygen content of the Earth's atmosphere, and supplies most of the energy necessary for life on Earth.</textarea>
+          <button class="demo-run-btn" onclick="runSummarize()">Summarize</button>
+        </div>
+        <div class="demo-output" id="sum-output">
+          <span class="out-label">Summary</span>
+          <span class="out-text" id="sum-text"></span>
+        </div>
+        <div class="demo-code">
+          <div class="demo-code-label">Code</div>
+          <div class="code-block"><div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><div class="code-body"><span class="kw">from</span> ahf_ai <span class="kw">import</span> <span class="cls">Summarizer</span>
+
+summarizer = <span class="cls">Summarizer</span>()
+summary = summarizer.<span class="fn">summarize</span>(
+    text=article_text,
+    max_length=<span class="num">100</span>,
+    style=<span class="str">"concise"</span>
+)
+<span class="fn">print</span>(summary.text)</div></div>
+        </div>
+      </div>
+
+      <!-- Translation -->
+      <div class="demo-panel" id="panel-translate">
+        <div class="demo-input-area">
+          <input type="text" id="trans-input" placeholder="Enter text to translate..." value="Hello! How are you today?">
+          <select id="trans-lang">
+            <option value="zh">English &rarr; Chinese</option>
+            <option value="es">English &rarr; Spanish</option>
+            <option value="fr">English &rarr; French</option>
+            <option value="de">English &rarr; German</option>
+            <option value="ja">English &rarr; Japanese</option>
+            <option value="ko">English &rarr; Korean</option>
+          </select>
+          <button class="demo-run-btn" onclick="runTranslate()">Translate</button>
+        </div>
+        <div class="demo-output" id="trans-output">
+          <span class="out-label">Translation</span>
+          <span class="out-text" id="trans-text"></span>
+        </div>
+        <div class="demo-code">
+          <div class="demo-code-label">Code</div>
+          <div class="code-block"><div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><div class="code-body"><span class="kw">from</span> ahf_ai <span class="kw">import</span> <span class="cls">Translator</span>
+
+translator = <span class="cls">Translator</span>()
+result = translator.<span class="fn">translate</span>(
+    text=<span class="str">"Hello! How are you today?"</span>,
+    source=<span class="str">"en"</span>,
+    target=<span class="str">"zh"</span>
+)
+<span class="fn">print</span>(result.text)       <span class="cm"># Translated text</span>
+<span class="fn">print</span>(result.confidence) <span class="cm"># 0.97</span></div></div>
+        </div>
+      </div>
+
+      <!-- Classification -->
+      <div class="demo-panel" id="panel-classify">
+        <div class="demo-input-area">
+          <input type="text" id="class-input" placeholder="Enter text to classify..." value="The new quantum computer chip achieved a breakthrough in error correction rates.">
+          <button class="demo-run-btn" onclick="runClassify()">Classify</button>
+        </div>
+        <div class="demo-output" id="class-output">
+          <span class="out-label">Classification Results</span>
+          <div class="out-text class-result" id="class-text"></div>
+        </div>
+        <div class="demo-code">
+          <div class="demo-code-label">Code</div>
+          <div class="code-block"><div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><div class="code-body"><span class="kw">from</span> ahf_ai <span class="kw">import</span> <span class="cls">Classifier</span>
+
+classifier = <span class="cls">Classifier</span>(
+    categories=[<span class="str">"Technology"</span>, <span class="str">"Science"</span>, <span class="str">"Business"</span>, <span class="str">"Health"</span>]
+)
+result = classifier.<span class="fn">classify</span>(
+    text=<span class="str">"The new quantum computer chip..."</span>
+)
+<span class="kw">for</span> label <span class="kw">in</span> result.labels:
+    <span class="fn">print</span>(f<span class="str">"{label.name}: {label.score:.0%}"</span>)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Code Examples -->
+<section id="code-examples">
+  <div class="container">
+    <div class="section-label reveal">Integration</div>
+    <h2 class="section-title reveal">Code Examples</h2>
+    <p class="section-desc reveal">Get started in minutes with Python or TypeScript. Comprehensive type safety across both languages.</p>
+    <div class="code-examples-grid">
+      <div class="reveal">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <div class="code-body"><span class="kw">from</span> ahf_ai <span class="kw">import</span> <span class="cls">TextGenerator</span>, <span class="cls">Summarizer</span>, <span class="cls">Translator</span>
+<span class="kw">from</span> ahf_ai.safety <span class="kw">import</span> <span class="cls">ContentFilter</span>
+
+<span class="cm"># Initialize with responsible defaults</span>
+generator = <span class="cls">TextGenerator</span>(
+    provider=<span class="str">"openai"</span>,
+    safety=<span class="cls">ContentFilter</span>.STRICT,
+    verbose=<span class="kw">True</span>  <span class="cm"># Log each step for learning</span>
+)
+
+<span class="cm"># Generate text with streaming</span>
+<span class="kw">for</span> chunk <span class="kw">in</span> generator.<span class="fn">stream</span>(
+    prompt=<span class="str">"Explain neural networks simply"</span>,
+    max_tokens=<span class="num">300</span>
+):
+    <span class="fn">print</span>(chunk, end=<span class="str">""</span>, flush=<span class="kw">True</span>)
+
+<span class="cm"># Summarize a document</span>
+summarizer = <span class="cls">Summarizer</span>(provider=<span class="str">"anthropic"</span>)
+summary = summarizer.<span class="fn">summarize</span>(
+    text=long_document,
+    max_length=<span class="num">150</span>,
+    style=<span class="str">"bullet_points"</span>
+)
+
+<span class="cm"># Translate with confidence score</span>
+translator = <span class="cls">Translator</span>()
+result = translator.<span class="fn">translate</span>(
+    <span class="str">"Knowledge is power"</span>,
+    target=<span class="str">"zh"</span>
+)
+<span class="fn">print</span>(f<span class="str">"{result.text} ({result.confidence:.0%})"</span>)</div>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">TypeScript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <div class="code-body"><span class="kw">import</span> {
+  <span class="cls">TextGenerator</span>,
+  <span class="cls">Summarizer</span>,
+  <span class="cls">Translator</span>,
+  <span class="cls">ContentFilter</span>
+} <span class="kw">from</span> <span class="str">'@ahf/ai-framework'</span>;
+
+<span class="cm">// Initialize with responsible defaults</span>
+<span class="kw">const</span> generator = <span class="kw">new</span> <span class="cls">TextGenerator</span>({
+  provider: <span class="str">'openai'</span>,
+  safety: <span class="cls">ContentFilter</span>.<span class="prop">STRICT</span>,
+  verbose: <span class="kw">true</span>,
+});
+
+<span class="cm">// Generate text with streaming</span>
+<span class="kw">const</span> stream = generator.<span class="fn">stream</span>({
+  prompt: <span class="str">'Explain neural networks simply'</span>,
+  maxTokens: <span class="num">300</span>,
+});
+
+<span class="kw">for await</span> (<span class="kw">const</span> chunk <span class="kw">of</span> stream) {
+  process.stdout.<span class="fn">write</span>(chunk);
+}
+
+<span class="cm">// Summarize a document</span>
+<span class="kw">const</span> summarizer = <span class="kw">new</span> <span class="cls">Summarizer</span>({
+  provider: <span class="str">'anthropic'</span>,
+});
+<span class="kw">const</span> summary = <span class="kw">await</span> summarizer.<span class="fn">summarize</span>({
+  text: longDocument,
+  maxLength: <span class="num">150</span>,
+  style: <span class="str">'bullet_points'</span>,
+});
+
+<span class="cm">// Translate with confidence</span>
+<span class="kw">const</span> translator = <span class="kw">new</span> <span class="cls">Translator</span>();
+<span class="kw">const</span> result = <span class="kw">await</span> translator.<span class="fn">translate</span>({
+  text: <span class="str">'Knowledge is power'</span>,
+  target: <span class="str">'zh'</span>,
+});
+console.<span class="fn">log</span>(<span class="str">`${result.text} (${result.confidence})`</span>);</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Quick Start -->
+<section id="quickstart">
+  <div class="container">
+    <div class="section-label reveal">Getting Started</div>
+    <h2 class="section-title reveal">Quick Start</h2>
+    <p class="section-desc reveal">Up and running in under two minutes.</p>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Install the package</h3>
+          <p>Available via pip for Python or npm for TypeScript.</p>
+          <div class="step-code"><code>pip install ahf-ai</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <div style="height:8px"></div>
+          <div class="step-code"><code>npm install @ahf/ai-framework</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Set your API key</h3>
+          <p>Configure your preferred provider's API key as an environment variable.</p>
+          <div class="step-code"><code>export OPENAI_API_KEY="sk-your-key-here"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Write your first query</h3>
+          <p>Import the module and generate text with responsible defaults enabled automatically.</p>
+          <div class="step-code"><code>python -c "from ahf_ai import TextGenerator; print(TextGenerator().generate('Hello!'))"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>Enable verbose mode for learning</h3>
+          <p>Turn on detailed logging to see exactly what happens at each step of the pipeline.</p>
+          <div class="step-code"><code>generator = TextGenerator(verbose=True)  # See every step explained</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- API Reference -->
+<section id="docs">
+  <div class="container">
+    <div class="section-label reveal">Reference</div>
+    <h2 class="section-title reveal">API Reference</h2>
+    <p class="section-desc reveal">Complete documentation for every module and method.</p>
+    <div class="api-cards">
+
+      <div class="api-card reveal">
+        <div class="api-card-header" onclick="toggleApi(this)">
+          <h3><span class="api-method post">POST</span> TextGenerator.generate()</h3>
+          <span class="api-card-toggle">&#9660;</span>
+        </div>
+        <div class="api-card-body">
+          <p style="color:var(--text2);font-size:.9rem;margin-top:16px">Generate text from a prompt using the configured AI provider. Applies safety filters by default.</p>
+          <div class="api-params">
+            <h4>Parameters</h4>
+            <div class="api-param"><span class="api-param-name">prompt</span><span class="api-param-type">str</span><span class="api-param-desc">The input prompt for text generation</span></div>
+            <div class="api-param"><span class="api-param-name">max_tokens</span><span class="api-param-type">int</span><span class="api-param-desc">Maximum number of tokens to generate (default: 256)</span></div>
+            <div class="api-param"><span class="api-param-name">temperature</span><span class="api-param-type">float</span><span class="api-param-desc">Sampling temperature between 0.0 and 2.0 (default: 0.7)</span></div>
+            <div class="api-param"><span class="api-param-name">safety</span><span class="api-param-type">ContentFilter</span><span class="api-param-desc">Safety filter level: STRICT, MODERATE, or NONE (default: MODERATE)</span></div>
+            <div class="api-param"><span class="api-param-name">stream</span><span class="api-param-type">bool</span><span class="api-param-desc">Whether to stream the response token-by-token (default: False)</span></div>
+          </div>
+          <div class="api-params">
+            <h4>Returns</h4>
+            <div class="api-param"><span class="api-param-name">response</span><span class="api-param-type">GenerateResult</span><span class="api-param-desc">Object containing .text, .tokens_used, .provider, .safety_flags</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-card reveal">
+        <div class="api-card-header" onclick="toggleApi(this)">
+          <h3><span class="api-method post">POST</span> Summarizer.summarize()</h3>
+          <span class="api-card-toggle">&#9660;</span>
+        </div>
+        <div class="api-card-body">
+          <p style="color:var(--text2);font-size:.9rem;margin-top:16px">Condense long text into a concise summary. Supports multiple output styles.</p>
+          <div class="api-params">
+            <h4>Parameters</h4>
+            <div class="api-param"><span class="api-param-name">text</span><span class="api-param-type">str</span><span class="api-param-desc">The input text to summarize</span></div>
+            <div class="api-param"><span class="api-param-name">max_length</span><span class="api-param-type">int</span><span class="api-param-desc">Maximum word count of the summary (default: 100)</span></div>
+            <div class="api-param"><span class="api-param-name">style</span><span class="api-param-type">str</span><span class="api-param-desc">Output style: "concise", "detailed", or "bullet_points" (default: "concise")</span></div>
+          </div>
+          <div class="api-params">
+            <h4>Returns</h4>
+            <div class="api-param"><span class="api-param-name">summary</span><span class="api-param-type">SummaryResult</span><span class="api-param-desc">Object containing .text, .word_count, .compression_ratio</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-card reveal">
+        <div class="api-card-header" onclick="toggleApi(this)">
+          <h3><span class="api-method post">POST</span> Translator.translate()</h3>
+          <span class="api-card-toggle">&#9660;</span>
+        </div>
+        <div class="api-card-body">
+          <p style="color:var(--text2);font-size:.9rem;margin-top:16px">Translate text between 20+ language pairs with confidence scoring.</p>
+          <div class="api-params">
+            <h4>Parameters</h4>
+            <div class="api-param"><span class="api-param-name">text</span><span class="api-param-type">str</span><span class="api-param-desc">The text to translate</span></div>
+            <div class="api-param"><span class="api-param-name">source</span><span class="api-param-type">str</span><span class="api-param-desc">Source language code, or "auto" for detection (default: "auto")</span></div>
+            <div class="api-param"><span class="api-param-name">target</span><span class="api-param-type">str</span><span class="api-param-desc">Target language code (e.g., "zh", "es", "fr")</span></div>
+          </div>
+          <div class="api-params">
+            <h4>Returns</h4>
+            <div class="api-param"><span class="api-param-name">result</span><span class="api-param-type">TranslateResult</span><span class="api-param-desc">Object containing .text, .source_lang, .target_lang, .confidence</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-card reveal">
+        <div class="api-card-header" onclick="toggleApi(this)">
+          <h3><span class="api-method post">POST</span> Classifier.classify()</h3>
+          <span class="api-card-toggle">&#9660;</span>
+        </div>
+        <div class="api-card-body">
+          <p style="color:var(--text2);font-size:.9rem;margin-top:16px">Categorize text with confidence scores across custom or predefined label sets.</p>
+          <div class="api-params">
+            <h4>Parameters</h4>
+            <div class="api-param"><span class="api-param-name">text</span><span class="api-param-type">str</span><span class="api-param-desc">The text to classify</span></div>
+            <div class="api-param"><span class="api-param-name">categories</span><span class="api-param-type">list[str]</span><span class="api-param-desc">List of category labels to classify against</span></div>
+            <div class="api-param"><span class="api-param-name">multi_label</span><span class="api-param-type">bool</span><span class="api-param-desc">Allow multiple labels per input (default: True)</span></div>
+            <div class="api-param"><span class="api-param-name">threshold</span><span class="api-param-type">float</span><span class="api-param-desc">Minimum confidence threshold for labels (default: 0.1)</span></div>
+          </div>
+          <div class="api-params">
+            <h4>Returns</h4>
+            <div class="api-param"><span class="api-param-name">result</span><span class="api-param-type">ClassifyResult</span><span class="api-param-desc">Object containing .labels (list of {name, score}), .top_label, .processing_time</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- About -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="reveal">
+        <div class="section-label">Our Mission</div>
+        <h2 class="section-title">Built for the Public Good</h2>
+        <p>The AI Application Framework is part of the Applied Humanity Foundation's mission to advance human well-being through responsible AI application, open-source tools, and digital literacy education.</p>
+        <p>We believe powerful AI tools should be accessible to everyone -- especially educators, researchers, and nonprofit organizations working to make the world better.</p>
+        <p>As a 501(c)(3) nonprofit, we develop these tools as public-interest resources. This project does not provide AI models; it provides tools for responsibly using publicly available AI APIs and services.</p>
+      </div>
+      <div class="about-highlight reveal">
+        <h3>Our Principles</h3>
+        <ul class="about-list">
+          <li>Safety and responsible defaults in every feature</li>
+          <li>Transparency through open source and detailed logging</li>
+          <li>Accessibility for educators and nonprofit developers</li>
+          <li>Privacy-first design with no data collection</li>
+          <li>Community-driven development and governance</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <span class="footer-logo">AIAF</span>
+      <ul class="footer-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#demo">Demo</a></li>
+        <li><a href="#docs">Docs</a></li>
+        <li><a href="https://github.com/applied-humanity-foundation/ai-application-framework" target="_blank">GitHub</a></li>
+        <li><a href="https://appliedhumanityfoundation.org" target="_blank">Foundation</a></li>
+      </ul>
+      <p class="footer-copy">Built with care by <a href="https://appliedhumanityfoundation.org" target="_blank">Applied Humanity Foundation</a> &middot; MIT License &middot; 2026</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ============================
+   Neural Network Canvas Background
+   ============================ */
+(function() {
+  const canvas = document.getElementById('bgCanvas');
+  const ctx = canvas.getContext('2d');
+  let w, h, nodes = [], frame = 0;
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+
+  function initNodes() {
+    nodes = [];
+    const count = Math.floor((w * h) / 18000);
+    for (let i = 0; i < count; i++) {
+      nodes.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        r: Math.random() * 2 + 1
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    frame++;
+    for (let i = 0; i < nodes.length; i++) {
+      const n = nodes[i];
+      n.x += n.vx;
+      n.y += n.vy;
+      if (n.x < 0 || n.x > w) n.vx *= -1;
+      if (n.y < 0 || n.y > h) n.vy *= -1;
+
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(37,99,235,0.5)';
+      ctx.fill();
+
+      for (let j = i + 1; j < nodes.length; j++) {
+        const m = nodes[j];
+        const dx = n.x - m.x;
+        const dy = n.y - m.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 150) {
+          ctx.beginPath();
+          ctx.moveTo(n.x, n.y);
+          ctx.lineTo(m.x, m.y);
+          const alpha = (1 - dist / 150) * 0.15;
+          ctx.strokeStyle = `rgba(14,165,233,${alpha})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', () => { resize(); initNodes(); });
+  resize();
+  initNodes();
+  draw();
+})();
+
+/* ============================
+   Hero Typewriter
+   ============================ */
+(function() {
+  const codeLines = [
+    { text: 'from ', cls: 'kw' },
+    { text: 'ahf_ai ', cls: '' },
+    { text: 'import ', cls: 'kw' },
+    { text: 'TextGenerator\n', cls: 'fn' },
+    { text: '\n', cls: '' },
+    { text: '# Responsible AI, made simple\n', cls: 'cm' },
+    { text: 'generator = ', cls: '' },
+    { text: 'TextGenerator', cls: 'fn' },
+    { text: '(\n', cls: '' },
+    { text: '    provider=', cls: '' },
+    { text: '"openai"', cls: 'str' },
+    { text: ',\n', cls: '' },
+    { text: '    safety=', cls: '' },
+    { text: '"strict"', cls: 'str' },
+    { text: '\n)\n', cls: '' },
+    { text: '\n', cls: '' },
+    { text: 'response = generator.', cls: '' },
+    { text: 'generate', cls: 'fn' },
+    { text: '(\n', cls: '' },
+    { text: '    prompt=', cls: '' },
+    { text: '"Explain AI ethics"', cls: 'str' },
+    { text: '\n)\n', cls: '' },
+    { text: '\n', cls: '' },
+    { text: 'print', cls: 'fn' },
+    { text: '(response.text)', cls: '' },
+  ];
+
+  const container = document.getElementById('heroCode');
+  let segIdx = 0, charIdx = 0;
+  const cursor = document.createElement('span');
+  cursor.className = 'type-cursor';
+
+  function type() {
+    if (segIdx >= codeLines.length) {
+      container.appendChild(cursor);
+      return;
+    }
+    const seg = codeLines[segIdx];
+    if (charIdx === 0 && seg.cls) {
+      const span = document.createElement('span');
+      span.className = seg.cls;
+      span.dataset.full = seg.text;
+      span.textContent = '';
+      container.appendChild(span);
+    }
+    const target = seg.cls
+      ? container.querySelector(`span.${seg.cls}:last-of-type`)
+      : null;
+
+    if (charIdx < seg.text.length) {
+      const ch = seg.text[charIdx];
+      if (target) {
+        target.textContent += ch;
+      } else {
+        container.appendChild(document.createTextNode(ch));
+      }
+      charIdx++;
+      container.appendChild(cursor);
+      setTimeout(type, ch === '\n' ? 80 : 28 + Math.random() * 22);
+    } else {
+      charIdx = 0;
+      segIdx++;
+      type();
+    }
+  }
+
+  setTimeout(type, 600);
+})();
+
+/* ============================
+   Navigation hide on scroll
+   ============================ */
+(function() {
+  let lastY = 0;
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    if (y > lastY && y > 120) nav.classList.add('hidden');
+    else nav.classList.remove('hidden');
+    lastY = y;
+  });
+})();
+
+/* ============================
+   Scroll Reveal
+   ============================ */
+(function() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+})();
+
+/* ============================
+   Demo Tab Switching
+   ============================ */
+function switchTab(tab) {
+  document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.demo-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+  document.getElementById(`panel-${tab}`).classList.add('active');
+}
+
+/* ============================
+   Simulated Streaming Output
+   ============================ */
+let activeStream = null;
+
+function streamText(el, text, speed) {
+  if (activeStream) clearTimeout(activeStream);
+  el.textContent = '';
+  let i = 0;
+  const cursor = document.createElement('span');
+  cursor.className = 'type-cursor';
+
+  function next() {
+    if (i < text.length) {
+      el.textContent += text[i];
+      el.appendChild(cursor);
+      i++;
+      activeStream = setTimeout(next, speed || 18);
+    } else {
+      if (cursor.parentNode) cursor.remove();
+      activeStream = null;
+    }
+  }
+  next();
+}
+
+/* Text Generation */
+const genResponses = {
+  default: "Photosynthesis is like a plant's way of making its own food using sunlight! Here's how it works:\n\nImagine the plant is like a tiny kitchen. The leaves catch sunlight (that's the energy source, like turning on the stove). The roots drink up water from the soil, and tiny holes in the leaves breathe in carbon dioxide from the air.\n\nThe plant mixes the water and carbon dioxide together using the energy from sunlight, and -- ta-da! -- it makes sugar (glucose), which is the plant's food. As a bonus, it releases oxygen into the air, which is what we breathe!\n\nSo basically: Sunlight + Water + Carbon Dioxide = Sugar + Oxygen.\n\nPretty cool, right? Plants are feeding themselves AND helping us breathe at the same time!",
+};
+
+function runGenerate() {
+  const input = document.getElementById('gen-input').value.trim();
+  if (!input) return;
+  const el = document.getElementById('gen-text');
+  const btn = document.querySelector('#panel-generate .demo-run-btn');
+  btn.disabled = true;
+  const response = genResponses.default;
+  streamText(el, response, 15);
+  setTimeout(() => { btn.disabled = false; }, response.length * 15 + 200);
+}
+
+/* Summarization */
+function runSummarize() {
+  const input = document.getElementById('sum-input').value.trim();
+  if (!input) return;
+  const el = document.getElementById('sum-text');
+  const btn = document.querySelector('#panel-summarize .demo-run-btn');
+  btn.disabled = true;
+  const summary = "Photosynthesis is the process by which plants, algae, and cyanobacteria convert light energy into chemical energy stored as sugars. Using carbon dioxide and water as inputs, these organisms produce carbohydrates and release oxygen. This process is essential for maintaining Earth's atmospheric oxygen and sustaining nearly all life on the planet.";
+  streamText(el, summary, 15);
+  setTimeout(() => { btn.disabled = false; }, summary.length * 15 + 200);
+}
+
+/* Translation */
+const translations = {
+  zh: "你好！你今天好吗？",
+  es: "¡Hola! ¿Cómo estás hoy?",
+  fr: "Bonjour ! Comment allez-vous aujourd'hui ?",
+  de: "Hallo! Wie geht es Ihnen heute?",
+  ja: "こんにちは！今日はお元気ですか？",
+  ko: "안녕하세요! 오늘 기분이 어떠세요?"
+};
+
+function runTranslate() {
+  const input = document.getElementById('trans-input').value.trim();
+  if (!input) return;
+  const lang = document.getElementById('trans-lang').value;
+  const el = document.getElementById('trans-text');
+  const btn = document.querySelector('#panel-translate .demo-run-btn');
+  btn.disabled = true;
+  const result = translations[lang] || translations.zh;
+  streamText(el, result + "\n\nConfidence: 0.97", 25);
+  setTimeout(() => { btn.disabled = false; }, (result.length + 20) * 25 + 200);
+}
+
+/* Classification */
+function runClassify() {
+  const input = document.getElementById('class-input').value.trim();
+  if (!input) return;
+  const el = document.getElementById('class-text');
+  const btn = document.querySelector('#panel-classify .demo-run-btn');
+  btn.disabled = true;
+
+  const categories = [
+    { name: 'Technology', score: 92 },
+    { name: 'Science', score: 87 },
+    { name: 'Business', score: 34 },
+    { name: 'Health', score: 12 },
+    { name: 'Politics', score: 5 },
+  ];
+
+  el.innerHTML = '';
+  categories.forEach((cat, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'class-bar-wrap';
+    wrap.innerHTML = `
+      <div class="class-bar-label"><span>${cat.name}</span><span>${cat.score}%</span></div>
+      <div class="class-bar"><div class="class-bar-fill" style="width:0%"></div></div>
+    `;
+    el.appendChild(wrap);
+    setTimeout(() => {
+      wrap.querySelector('.class-bar-fill').style.width = cat.score + '%';
+    }, 150 + i * 120);
+  });
+
+  setTimeout(() => { btn.disabled = false; }, 1200);
+}
+
+/* ============================
+   Copy to Clipboard
+   ============================ */
+function copyCode(btn) {
+  const block = btn.closest('.code-block') || btn.closest('.step-code');
+  let text = '';
+  if (block.classList.contains('code-block')) {
+    const body = block.querySelector('.code-body');
+    text = body.textContent;
+  } else {
+    const code = block.querySelector('code');
+    text = code.textContent;
+  }
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+/* ============================
+   API Reference Toggle
+   ============================ */
+function toggleApi(header) {
+  const card = header.closest('.api-card');
+  card.classList.toggle('open');
+}
+
+/* ============================
+   Auto-run first demo on load
+   ============================ */
+window.addEventListener('load', () => {
+  setTimeout(runGenerate, 1500);
+});
+
+/* Close mobile nav on link click */
+document.querySelectorAll('.nav-links a').forEach(a => {
+  a.addEventListener('click', () => {
+    document.querySelector('.nav-links').classList.remove('open');
+  });
+});
+</script>
+</body>
+</html>

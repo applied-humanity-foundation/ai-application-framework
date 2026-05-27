@@ -1,0 +1,50 @@
+{
+  "name": "@ahf/ai-framework",
+  "version": "0.1.0",
+  "description": "A unified TypeScript library for AI text generation, summarization, translation, and classification with built-in safety filters.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup typescript/src/index.ts --format cjs,esm --dts --out-dir dist",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint 'typescript/src/**/*.ts' 'tests/typescript/**/*.ts'",
+    "lint:fix": "eslint --fix 'typescript/src/**/*.ts' 'tests/typescript/**/*.ts'",
+    "format": "prettier --write 'typescript/src/**/*.ts' 'tests/typescript/**/*.ts'",
+    "format:check": "prettier --check 'typescript/src/**/*.ts' 'tests/typescript/**/*.ts'",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf dist coverage",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.0",
+    "rimraf": "^5.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.2.0"
+  },
+  "author": "Applied Humanity Foundation <dev@appliedhumanity.org>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/applied-humanity-foundation/ai-application-framework.git"
+  },
+  "keywords": [
+    "ai",
+    "llm",
+    "text-generation",
+    "nlp",
+    "safety",
+    "typescript"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
