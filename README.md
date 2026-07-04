@@ -83,7 +83,7 @@ console.log(response.text);
 
 ## Educational Purpose
 
-This framework is developed as a public-interest educational resource by the Applied Humanity Foundation, a 501(c)(3) nonprofit organization. It is designed to teach responsible AI integration practices and is intended for educational, research, and nonprofit use.
+This framework is developed as a public-interest educational resource by the Applied Humanity Foundation, a Colorado nonprofit corporation (501(c)(3) tax-exempt). It is designed to teach responsible AI integration practices and is intended for educational, research, and nonprofit use.
 
 This project does not provide AI models — it provides tools for responsibly using publicly available AI APIs and services.
 
